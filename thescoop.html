@@ -255,47 +255,70 @@ html, body {
   z-index: 2;
 }
 
-.right-panel.final-state {
-  background: transparent;
+/* ── Final State: full-bleed painting + floating card ─ */
+
+.final-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: none;
+  overflow: hidden;
+  cursor: none;
 }
 
-.right-panel.final-state .right-scrollable {
-  position: relative;
-  z-index: 6;
-  background: transparent;
+.final-overlay.visible {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  padding: 0;
+  justify-content: center;
 }
 
-.right-panel.final-state .artwork-wrapper {
-  width: 100%;
-  aspect-ratio: auto;
-  height: 100vh;
-  border-radius: 0;
-  background: transparent;
+.final-overlay__bg {
+  position: absolute; inset: 0;
+  background: #000;
+  background-size: cover;
+  background-position: center;
 }
 
-.right-panel.final-state .artwork-img {
+.final-overlay__card {
   position: relative;
-  top: auto; left: auto;
-  transform: none;
+  z-index: 2;
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  width: min(420px, 85vw);
+  max-height: calc(100vh - 60px);
+  overflow-y: auto;
+  box-shadow: 0 12px 60px rgba(0,0,0,0.3);
+}
+
+.final-overlay__artwork {
   width: 100%;
-  height: 100%;
-  max-height: none;
-  object-fit: contain;
   display: block;
 }
 
-.right-panel.final-state .info-area {
-  background: #fff;
-  padding: 40px 40px 64px;
+.final-overlay__info {
+  padding: 24px 28px 40px;
 }
 
-.right-panel.final-state .episode-area.visible {
-  margin: 0 auto;
+.final-overlay__title {
+  font-weight: 600; font-size: 17px;
+  color: #000; margin-bottom: 4px;
 }
+
+.final-overlay__date {
+  font-weight: 400; font-size: 13px;
+  color: #999; margin-bottom: 20px;
+}
+
+.final-overlay__body {
+  font-weight: 400; font-size: 14.5px;
+  color: #222; line-height: 1.65;
+  white-space: pre-wrap;
+}
+
+.final-overlay__card::-webkit-scrollbar { width: 4px; }
+.final-overlay__card::-webkit-scrollbar-track { background: transparent; }
+.final-overlay__card::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
 
 .final-header {
   display: flex; align-items: center; gap: 1.87cqi;
@@ -578,6 +601,19 @@ html, body {
     </div>
   </div>
 
+  <!-- FINAL OVERLAY (painting bg + floating card) -->
+  <div class="final-overlay" id="finalOverlay">
+    <div class="final-overlay__bg" id="finalOverlayBg"></div>
+    <div class="final-overlay__card">
+      <img class="final-overlay__artwork" id="finalOverlayArt" src="" alt="The Scoop Artwork">
+      <div class="final-overlay__info">
+        <div class="final-overlay__title" id="finalOverlayTitle"></div>
+        <div class="final-overlay__date" id="finalOverlayDate"></div>
+        <div class="final-overlay__body" id="finalOverlayBody"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- CUSTOM CURSOR -->
   <div class="custom-cursor" id="customCursor">
     <span class="cursor-label">Generate</span>
@@ -659,6 +695,12 @@ var playerProgressFill = document.getElementById('playerProgressFill');
 var playerBarInfo = document.getElementById('playerBarInfo');
 var playerBarTime = document.getElementById('playerBarTime');
 var rightScrollable = document.getElementById('rightScrollable');
+var finalOverlay = document.getElementById('finalOverlay');
+var finalOverlayBg = document.getElementById('finalOverlayBg');
+var finalOverlayArt = document.getElementById('finalOverlayArt');
+var finalOverlayTitle = document.getElementById('finalOverlayTitle');
+var finalOverlayDate = document.getElementById('finalOverlayDate');
+var finalOverlayBody = document.getElementById('finalOverlayBody');
 var cursorEl = document.getElementById('customCursor');
 
 // ── State ──────────────────────────────────────────────────────
@@ -785,19 +827,15 @@ function startGeneration() {
   clearTimers();
   stopPlayback();
 
+  finalOverlay.classList.remove('visible');
   artworkFinal.classList.remove('visible');
+  artworkImg.src = ILLUSTRATION_PATH + ARTWORK_FILES[0];
   artworkImg.style.display = 'block';
   brandOverlay.classList.add('visible');
   episodeArea.classList.remove('visible');
   progressArea.classList.add('visible');
   playerBar.classList.remove('visible');
   playBtn.dataset.playing = 'false';
-
-  var rightPanel = document.querySelector('.right-panel');
-  rightPanel.classList.remove('final-state');
-  rightPanel.style.backgroundImage = '';
-  rightPanel.style.backgroundSize = '';
-  rightPanel.style.backgroundPosition = '';
 
   progress = 0;
   artworkIndex = 0;
@@ -836,26 +874,17 @@ function completeGeneration(cafeName) {
   state = 'complete';
   progressArea.classList.remove('visible');
 
-  var rightPanel = document.querySelector('.right-panel');
-  rightPanel.classList.add('final-state');
+  currentBriefing = generateBriefing(cafeName);
 
   if (cafePhotoUrl) {
-    rightPanel.style.backgroundImage = 'url(' + cafePhotoUrl + ')';
-    rightPanel.style.backgroundSize = 'cover';
-    rightPanel.style.backgroundPosition = 'center';
+    finalOverlayBg.style.backgroundImage = 'url(' + cafePhotoUrl + ')';
   }
 
-  artworkImg.src = 'public/images/go-scoop-artwork.png';
-  artworkImg.style.display = 'block';
-  brandOverlay.classList.remove('visible');
-  artworkFinal.classList.remove('visible');
-  playBtn.dataset.playing = 'false';
-
-  currentBriefing = generateBriefing(cafeName);
-  episodeTitle.textContent = 'Episode 01 \u2014 \u201C' + currentBriefing.title + '\u201D';
-  episodeDate.textContent = currentBriefing.date;
-  episodeBody.textContent = currentBriefing.body;
-  episodeArea.classList.add('visible');
+  finalOverlayArt.src = 'public/images/go-scoop-artwork.png';
+  finalOverlayTitle.textContent = 'Episode 01 \u2014 \u201C' + currentBriefing.title + '\u201D';
+  finalOverlayDate.textContent = currentBriefing.date;
+  finalOverlayBody.textContent = currentBriefing.body;
+  finalOverlay.classList.add('visible');
 
   playerBarInfo.innerHTML = 'Episode 01 \u2014 \u201C' + currentBriefing.title + '\u201D <span class="player-bar-date">' + currentBriefing.date + '</span>';
 }
