@@ -245,10 +245,7 @@ html, body {
 .artwork-bg::after {
   content: '';
   position: absolute; inset: 0;
-  background: linear-gradient(180deg,
-    rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.1) 40%,
-    rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.55) 100%
-  );
+  background: rgba(0,0,0,0.08);
 }
 
 .artwork-overlay {
@@ -256,6 +253,48 @@ html, body {
   display: flex; flex-direction: column;
   padding: 4.27cqi 4.8cqi;
   z-index: 2;
+}
+
+.right-panel.final-state {
+  background: transparent;
+}
+
+.right-panel.final-state .right-scrollable {
+  position: relative;
+  z-index: 6;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+}
+
+.right-panel.final-state .artwork-wrapper {
+  width: 100%;
+  aspect-ratio: auto;
+  height: 100vh;
+  border-radius: 0;
+  background: transparent;
+}
+
+.right-panel.final-state .artwork-img {
+  position: relative;
+  top: auto; left: auto;
+  transform: none;
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  object-fit: contain;
+  display: block;
+}
+
+.right-panel.final-state .info-area {
+  background: #fff;
+  padding: 40px 40px 64px;
+}
+
+.right-panel.final-state .episode-area.visible {
+  margin: 0 auto;
 }
 
 .final-header {
@@ -754,6 +793,12 @@ function startGeneration() {
   playerBar.classList.remove('visible');
   playBtn.dataset.playing = 'false';
 
+  var rightPanel = document.querySelector('.right-panel');
+  rightPanel.classList.remove('final-state');
+  rightPanel.style.backgroundImage = '';
+  rightPanel.style.backgroundSize = '';
+  rightPanel.style.backgroundPosition = '';
+
   progress = 0;
   artworkIndex = 0;
   progressPercent.textContent = '0';
@@ -791,18 +836,19 @@ function completeGeneration(cafeName) {
   state = 'complete';
   progressArea.classList.remove('visible');
 
+  var rightPanel = document.querySelector('.right-panel');
+  rightPanel.classList.add('final-state');
+
   if (cafePhotoUrl) {
-    artworkBg.style.backgroundImage = 'url(' + cafePhotoUrl + ')';
-    artworkBg.style.backgroundColor = '';
-  } else {
-    artworkBg.style.backgroundImage = 'none';
-    artworkBg.style.backgroundColor = '#000';
+    rightPanel.style.backgroundImage = 'url(' + cafePhotoUrl + ')';
+    rightPanel.style.backgroundSize = 'cover';
+    rightPanel.style.backgroundPosition = 'center';
   }
 
-  finalCafeName.textContent = cafeName;
-  artworkImg.style.display = 'none';
+  artworkImg.src = 'public/images/go-scoop-artwork.png';
+  artworkImg.style.display = 'block';
   brandOverlay.classList.remove('visible');
-  artworkFinal.classList.add('visible');
+  artworkFinal.classList.remove('visible');
   playBtn.dataset.playing = 'false';
 
   currentBriefing = generateBriefing(cafeName);
