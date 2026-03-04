@@ -13,32 +13,32 @@
 .go-main {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 60px;
   padding: 0 60px;
 }
 
 .go-prompt {
   font-family: var(--font-body);
-  font-size: 16px;
+  font-size: 19px;
   font-weight: 400;
   color: var(--color-white);
   line-height: 1.5;
-  flex-shrink: 0;
-  align-self: center;
+  text-align: center;
+  margin-bottom: 36px;
 }
 
 .go-cards {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 .go-card {
   display: block;
   text-decoration: none;
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   flex-shrink: 0;
@@ -50,8 +50,8 @@
 }
 
 .go-card--scoop {
-  width: 240px;
-  height: 240px;
+  width: 288px;
+  height: 288px;
 }
 
 .go-card__img {
@@ -62,8 +62,8 @@
 }
 
 .go-card--index {
-  width: 340px;
-  height: 240px;
+  width: 408px;
+  height: 288px;
   background: var(--color-white);
 }
 
@@ -73,65 +73,67 @@
 
 @media (max-width: 1024px) {
   .go-main {
-    gap: 40px;
     padding: 0 40px;
   }
 
+  .go-prompt {
+    font-size: 17px;
+    margin-bottom: 28px;
+  }
+
   .go-card--scoop {
-    width: 200px;
-    height: 200px;
+    width: 240px;
+    height: 240px;
   }
 
   .go-card--index {
-    width: 284px;
-    height: 200px;
+    width: 340px;
+    height: 240px;
   }
 }
 
 @media (max-width: 768px) {
   .go-main {
-    flex-direction: column;
-    gap: 32px;
     padding: 40px 24px;
   }
 
   .go-prompt {
-    text-align: center;
+    margin-bottom: 24px;
   }
 
   .go-cards {
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
   }
 
   .go-card--scoop {
-    width: 260px;
-    height: 260px;
+    width: 312px;
+    height: 312px;
   }
 
   .go-card--index {
-    width: 260px;
-    height: 183px;
+    width: 312px;
+    height: 220px;
   }
 }
 
 @media (max-width: 480px) {
   .go-main {
     padding: 32px 20px;
-    gap: 24px;
   }
 
   .go-prompt {
-    font-size: 14px;
+    font-size: 16px;
+    margin-bottom: 20px;
   }
 
   .go-card--scoop {
-    width: 220px;
-    height: 220px;
+    width: 264px;
+    height: 264px;
   }
 
   .go-card--index {
-    width: 220px;
-    height: 155px;
+    width: 264px;
+    height: 186px;
   }
 }
