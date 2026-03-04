@@ -1,0 +1,491 @@
+/* =============================================
+   Font Faces
+   ============================================= */
+
+@font-face {
+  font-family: 'Cash Sans';
+  src: url('../public/fonts/CashSans-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cash Sans';
+  src: url('../public/fonts/CashSans-RegularItalic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cash Sans';
+  src: url('../public/fonts/CashSans-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cash Sans';
+  src: url('../public/fonts/CashSans-MediumItalic.woff2') format('woff2');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cash Sans';
+  src: url('../public/fonts/CashSans-Semibold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cash Sans';
+  src: url('../public/fonts/CashSans-SemiboldItalic.woff2') format('woff2');
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Staatliches';
+  src: url('../public/fonts/Staatliches-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cash Sans Mono';
+  src: url('../public/fonts/CashSansMono-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* =============================================
+   Fluid Scaling (headlines only)
+   1px at 1440 viewport = var(--s)
+   ============================================= */
+
+:root {
+  --s: calc(100vw / 1440);
+  --font-body: 'Cash Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'Cash Sans Mono', 'SF Mono', 'Fira Code', monospace;
+  --font-display: 'Staatliches', sans-serif;
+  --color-black: #000;
+  --color-white: #fff;
+}
+
+html {
+  font-family: var(--font-body);
+  color: var(--color-black);
+  background: var(--color-white);
+  cursor: url('../public/images/Cursor-Arrow.svg') 0 0, auto;
+}
+
+button,
+a,
+[role="button"],
+input[type="submit"],
+.audio-popup__btn,
+.s8__btn,
+.gen-submit {
+  cursor: url('../public/images/Cursor-Arrow-White.svg') 0 0, pointer !important;
+}
+
+.audio-popup .audio-popup__btn {
+  cursor: url('../public/images/Cursor-Arrow-White.svg') 0 0, pointer !important;
+}
+
+/* ── Loader ── */
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.loader--exit {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+
+.loader__graphics {
+  position: relative;
+  width: 200px;
+  height: 36px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.loader__graphics--visible {
+  opacity: 1;
+}
+
+.loader__icons {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.loader__graphic {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+}
+
+.loader__graphic--active {
+  opacity: 1;
+}
+
+.loader__center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  background: var(--color-white);
+  width: 46px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader__logo {
+  width: 30px;
+  height: 30px;
+}
+
+/* Hero enter animation */
+.section--hero {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.6s ease 0.1s, transform 0.6s ease 0.1s;
+}
+
+.section--hero.hero--hidden {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+[data-parallax-speed] {
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.svg-filters {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* =============================================
+   Snap Scroll Container
+   ============================================= */
+
+.sections {
+  height: 100vh;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.section {
+  height: 100vh;
+  scroll-snap-align: start;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* =============================================
+   Fixed: Square Logo (fixed size, not fluid)
+   ============================================= */
+
+.site-logo {
+  position: fixed;
+  top: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+}
+
+.site-logo img {
+  width: 28px;
+  height: auto;
+  transition: filter 0.3s ease;
+}
+
+.site-logo--light img {
+  filter: brightness(0) invert(1);
+}
+
+/* =============================================
+   Fixed: Audio Popup (fixed sizes, not fluid)
+   Single unified card with liquid glass bg
+   ============================================= */
+
+.audio-popup {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 7px;
+}
+
+.audio-popup::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(215, 215, 218, 0.15);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: inherit;
+  z-index: -1;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.audio-popup__info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.audio-popup__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-black);
+  line-height: 1.2;
+  transition: color 0.3s ease;
+}
+
+.audio-popup__subtitle {
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.5);
+  line-height: 1.35;
+  transition: color 0.3s ease;
+}
+
+.audio-popup__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 8px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-white);
+  background: var(--color-black);
+  border: none;
+  border-radius: 70px;
+  transition: opacity 0.2s ease, color 0.3s ease, background 0.3s ease;
+  width: fit-content;
+  text-decoration: none;
+}
+
+.audio-popup__btn:hover {
+  opacity: 0.85;
+}
+
+/* Animated Equalizer — 3 bars */
+.equalizer {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+
+.equalizer__bar {
+  width: 2px;
+  background: var(--color-white);
+  border-radius: 2px;
+  animation: equalize 0.8s ease-in-out infinite alternate;
+  transition: background 0.3s ease;
+}
+
+.equalizer__bar:nth-child(1) {
+  height: 40%;
+  animation-delay: -0.4s;
+}
+
+.equalizer__bar:nth-child(2) {
+  height: 80%;
+  animation-delay: -0.2s;
+}
+
+.equalizer__bar:nth-child(3) {
+  height: 55%;
+  animation-delay: -0.6s;
+}
+
+@keyframes equalize {
+  0% { height: 20%; }
+  100% { height: 100%; }
+}
+
+/* Artwork — inside the unified card */
+.audio-popup__artwork {
+  width: 100px;
+  height: 100px;
+  border-radius: 0;
+  object-fit: cover;
+  flex-shrink: 0;
+  transition: filter 0.3s ease;
+}
+
+/* Placeholder for empty sections */
+.section__placeholder {
+  font-size: 20px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.12);
+}
+
+/* =============================================
+   Fixed: Scroll Progress Indicator
+   Only visible from section 3 onwards.
+   Segments: thin 1px lines, active segment is 3px.
+   ============================================= */
+
+.scroll-indicator {
+  position: fixed;
+  left: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.scroll-indicator--visible {
+  opacity: 1;
+}
+
+.scroll-indicator__segment {
+  width: 1px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 1px;
+  transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+              height 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+              background 0.3s ease;
+}
+
+.scroll-indicator__segment--active {
+  width: 3px;
+  height: 10px;
+  background: var(--color-white);
+}
+
+.scroll-indicator--dark .scroll-indicator__segment {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.scroll-indicator--dark .scroll-indicator__segment--active {
+  background: var(--color-black);
+}
+
+/* =============================================
+   Audio popup: inverted for dark sections
+   ============================================= */
+
+.audio-popup--on-dark::before {
+  background: rgba(50, 50, 54, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.audio-popup--on-dark .audio-popup__title {
+  color: var(--color-white);
+}
+
+.audio-popup--on-dark .audio-popup__subtitle {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.audio-popup--on-dark .audio-popup__btn {
+  color: var(--color-black);
+  background: var(--color-white);
+}
+
+.audio-popup--on-dark .equalizer__bar {
+  background: var(--color-black);
+}
+
+.audio-popup--on-dark .audio-popup__artwork {
+  filter: invert(1);
+}
+
+/* =============================================
+   Responsive Breakpoints (non-headline elements)
+   ============================================= */
+
+@media (max-width: 1024px) {
+  .site-logo { top: 24px; }
+  .site-logo img { width: 26px; }
+
+  .audio-popup {
+    bottom: 20px;
+    right: 20px;
+    padding: 14px;
+    gap: 14px;
+  }
+  .audio-popup__artwork { width: 90px; height: 90px; }
+}
+
+@media (max-width: 768px) {
+  .site-logo { top: 20px; }
+  .site-logo img { width: 24px; }
+
+  .audio-popup {
+    bottom: 16px;
+    right: 16px;
+    padding: 12px;
+    gap: 12px;
+    border-radius: 7px;
+  }
+  .audio-popup__title { font-size: 14px; }
+  .audio-popup__subtitle { font-size: 12px; }
+  .audio-popup__btn { font-size: 12px; padding: 7px 12px; }
+  .audio-popup__artwork {
+    width: 80px;
+    height: 80px;
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .audio-popup {
+    padding: 10px;
+    gap: 10px;
+    border-radius: 7px;
+  }
+  .audio-popup__artwork {
+    width: 70px;
+    height: 70px;
+  }
+}

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generate Your Briefing — The Scoop</title>
+  <link rel="stylesheet" href="styles/reset.css">
+  <link rel="stylesheet" href="styles/global.css">
+  <link rel="stylesheet" href="styles/generate.css">
+</head>
+<body class="generate-page">
+
+  <header class="gen-header">
+    <a href="neighborhood-index.html" class="gen-header__logo">
+      <img src="public/images/Square-Logo.svg" alt="Square">
+    </a>
+  </header>
+
+  <main class="gen-main">
+    <div class="gen-form-col">
+      <h1 class="gen-headline">GET YOUR PERSONALIZED CULTURAL INTELLIGENCE BRIEFING</h1>
+
+      <form class="gen-form" id="genForm" autocomplete="off">
+        <div class="gen-field">
+          <label class="gen-field__label" for="genName">NAME</label>
+          <input class="gen-field__input" type="text" id="genName" name="name" placeholder="Name" required>
+        </div>
+        <div class="gen-field">
+          <label class="gen-field__label" for="genEmail">EMAIL</label>
+          <input class="gen-field__input" type="email" id="genEmail" name="email" placeholder="Email" required>
+        </div>
+        <div class="gen-field">
+          <label class="gen-field__label" for="genBizName">BUSINESS NAME</label>
+          <input class="gen-field__input" type="text" id="genBizName" name="bizname" placeholder="Business Name">
+        </div>
+        <div class="gen-field">
+          <label class="gen-field__label" for="genBusiness">TYPE OF BUSINESS</label>
+          <input class="gen-field__input" type="text" id="genBusiness" name="business" placeholder="Type of Business">
+        </div>
+        <div class="gen-field">
+          <label class="gen-field__label" for="genLocation">LOCATION OF BUSINESS</label>
+          <input class="gen-field__input" type="text" id="genLocation" name="location" placeholder="Location of Business">
+        </div>
+
+        <div class="gen-actions">
+          <button type="submit" class="gen-submit" id="genSubmit">Generate</button>
+          <p class="gen-legal">By clicking 'Generate' you agree to our <a href="#">Privacy Policy</a> and <a href="#">Terms &amp; Conditions</a></p>
+        </div>
+      </form>
+    </div>
+
+    <div class="gen-preview-col">
+      <div class="gen-artwork" id="genArtwork">
+        <div class="gen-artwork__inner">
+          <div class="gen-artwork__top">
+            <img src="public/images/Square-Logo-White.svg" alt="" class="gen-artwork__sq-logo">
+            <span class="gen-artwork__title">The Scoop</span>
+          </div>
+          <div class="gen-artwork__illo-wrap">
+            <img src="public/images/illustrations/illo-9.png" alt="" class="gen-artwork__illo" id="artworkIllo">
+          </div>
+          <div class="gen-artwork__bottom">
+            <span class="gen-artwork__bizname" id="artworkBizName"></span>
+            <span class="gen-artwork__ep">Ep 01</span>
+          </div>
+          <button class="gen-artwork__play" id="artworkPlay" aria-label="Play">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="23" stroke="white" stroke-width="2"/><path d="M22.4 16.1Q19 14 19 18L19 30Q19 34 22.4 31.9L31.6 26.1Q35 24 31.6 21.9Z" fill="white"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="gen-progress" id="genProgress">
+        <p class="gen-progress__pct"><strong id="genPct">0%</strong> Complete</p>
+        <p class="gen-progress__note">This may take a few minutes</p>
+      </div>
+    </div>
+  </main>
+
+  <script src="scripts/generate.js"></script>
+</body>
+</html>

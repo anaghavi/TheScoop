@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Neighborhood Index</title>
+  <link rel="stylesheet" href="styles/reset.css">
+  <link rel="stylesheet" href="styles/global.css">
+  <link rel="stylesheet" href="styles/sections.css">
+</head>
+<body>
+
+  <!-- Loader -->
+  <div class="loader" id="loader">
+    <div class="loader__graphics" id="loaderGraphics">
+      <div class="loader__icons" id="loaderIcons">
+        <img src="public/images/LoaderGraphic-1.svg" alt="" class="loader__graphic loader__graphic--active">
+        <img src="public/images/LoaderGraphic-2.svg" alt="" class="loader__graphic">
+        <img src="public/images/LoaderGraphic-3.svg" alt="" class="loader__graphic">
+        <img src="public/images/LoaderGraphic-4.svg" alt="" class="loader__graphic">
+        <img src="public/images/LoaderGraphic-5.svg" alt="" class="loader__graphic">
+        <img src="public/images/LoaderGraphic-6.svg" alt="" class="loader__graphic">
+        <img src="public/images/LoaderGraphic-7.svg" alt="" class="loader__graphic">
+      </div>
+      <div class="loader__center">
+        <img src="public/images/Square-Logo.svg" alt="Square" class="loader__logo">
+      </div>
+    </div>
+  </div>
+
+  <!-- SVG Filters — one per section so seed animation triggers independent repaints -->
+  <svg class="svg-filters" aria-hidden="true">
+    <defs>
+      <filter id="buzzy-1" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" seed="0" result="noise" class="buzzy-noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="buzzy-2" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" seed="0" result="noise" class="buzzy-noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="buzzy-3" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" seed="0" result="noise" class="buzzy-noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="buzzy-4" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" seed="0" result="noise" class="buzzy-noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="buzzy-5" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" seed="0" result="noise" class="buzzy-noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="buzzy-6" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" seed="0" result="noise" class="buzzy-noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="buzzy-7" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" seed="0" result="noise" class="buzzy-noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- Fixed: Square Logo -->
+  <header class="site-logo">
+    <img src="public/images/Square-Logo.svg" alt="Square">
+  </header>
+
+  <!-- Fixed: Audio Popup -->
+  <div class="audio-popup">
+    <div class="audio-popup__info">
+      <span class="audio-popup__title">The Scoop</span>
+      <span class="audio-popup__subtitle">Get your own personalized<br>business insights</span>
+      <a href="generate.html" class="audio-popup__btn">
+        <span class="equalizer">
+          <span class="equalizer__bar"></span>
+          <span class="equalizer__bar"></span>
+          <span class="equalizer__bar"></span>
+        </span>
+        Generate
+      </a>
+    </div>
+    <img src="public/images/TheScoop-Artwork-2x.png" alt="The Scoop Podcast" class="audio-popup__artwork">
+  </div>
+
+  <!-- Fixed: Scroll Progress Indicator (visible from S3 onwards) -->
+  <div class="scroll-indicator" id="scrollIndicator"></div>
+
+  <!-- Snap Scroll Container -->
+  <main class="sections">
+
+    <!-- Section 1: Hero -->
+    <section id="hero" class="section section--hero">
+      <div class="hero__content parallax-content" data-parallax-speed="0.12">
+        <h1 class="hero__headline">
+          <span class="hero__line-top">THE <span class="hero__illo-wrap"><img src="public/images/hero-icons/hero-icon-0.png" alt="" class="hero__illo" id="heroIllo"></span></span>
+          <span>NEIGHBORHOOD</span>
+          <span>INDEX</span>
+        </h1>
+        <p class="hero__subtitle">The trends shaping local business—<br>straight from the source.</p>
+      </div>
+    </section>
+
+    <!-- Section 2: Intro -->
+    <section id="s2" class="section section--2">
+      <div class="s2-grid" id="s2Grid"></div>
+      <div class="s2-text parallax-content" data-parallax-speed="0.1">
+        <img src="public/images/S2-Headline.svg" alt="What's Actually Happening Out There?" class="s2__headline">
+        <p class="s2__body">We looked at the data—from Square sellers to Cash App users—to find the patterns that matter. These are the shifts defining local commerce across the country right now.</p>
+      </div>
+    </section>
+
+    <!-- Section 3: The Death of the Dollar Menu -->
+    <section id="s3" class="section section--3">
+      <div class="s3-stickers" id="s3Stickers"></div>
+      <div class="s3-content parallax-content" data-parallax-speed="0.12">
+        <span class="s3__number">01</span>
+        <h2 class="s3__headline">THE DEATH OF<br>THE DOLLAR<br>MENU</h2>
+      </div>
+      <p class="s3__body parallax-content" data-parallax-speed="0.05">Fast-casual is the new fast food. Consumers are trading drive-thrus for counter-service spots with cleaner ingredients and $14 bowls. Square data shows fast-casual spend up year-over-year, while traditional QSR flattens. People will pay more—they just want to feel better about it.</p>
+    </section>
+
+    <!-- Section 4 -->
+    <section id="s4" class="section section--4">
+      <div class="s4-bg parallax-bg" data-parallax-speed="0.12">
+        <img src="public/images/S4-Bg-2x.png" alt="" class="s4-bg__img">
+      </div>
+      <div class="s4-content parallax-content" data-parallax-speed="0.15">
+        <span class="s4__number">02</span>
+        <h2 class="s4__headline">NEIGHBORHOOD<br>LOYALTY IS THE<br>NEW BRAND<br>LOYALTY</h2>
+      </div>
+      <p class="s4__body parallax-content" data-parallax-speed="0.05">Your corner store is beating the algorithm. Repeat transactions at independent, single-location businesses are outpacing chains. Shoppers are choosing the bodega over the app, the local bookshop over next-day shipping. Community is the product now.</p>
+    </section>
+
+    <!-- Section 5 -->
+    <section id="s5" class="section section--5">
+      <div class="s5-open" id="s5Open">
+        <object data="public/images/S5-Open.svg" type="image/svg+xml" class="s5-open__svg" id="s5Svg"></object>
+      </div>
+      <div class="s5-content parallax-content" data-parallax-speed="0.12">
+        <span class="s5__number">03</span>
+        <h2 class="s5__headline">THE 6PM<br>ECONOMY</h2>
+      </div>
+      <p class="s5__body parallax-content" data-parallax-speed="0.05">Evening spending is spiking—and it's not just dinner. From fitness classes to retail therapy, the post-work window is the new prime time. Businesses open past 6PM are seeing disproportionate growth. The 9-to-5 is dead; the 6-to-9 is thriving.</p>
+    </section>
+
+    <!-- Section 6 -->
+    <section id="s6" class="section section--6">
+      <div class="s6-bg parallax-bg" data-parallax-speed="0.12">
+        <img src="public/images/S6-Bg-2x.png" alt="" class="s6-bg__img">
+      </div>
+      <div class="s6-content parallax-content" data-parallax-speed="0.15">
+        <span class="s6__number">04</span>
+        <h2 class="s6__headline">THE SOBER<br>CURIOUS ARE<br>SPENDING</h2>
+      </div>
+      <p class="s6__body parallax-content" data-parallax-speed="0.05">Non-alcoholic options aren't a niche—they're a line item. Bars and restaurants with NA menus are capturing spend from a growing segment that wants the social experience without the hangover. Zero-proof is a revenue stream now.</p>
+    </section>
+
+    <!-- Section 7 -->
+    <section id="s7" class="section section--7">
+      <div class="s7-cash" id="s7Cash"></div>
+      <div class="s7-content parallax-content" data-parallax-speed="0.15">
+        <span class="s7__number">05</span>
+        <h2 class="s7__headline">TIPPING<br>CULTURE HIT A<br>CEILING</h2>
+      </div>
+      <p class="s7__body parallax-content" data-parallax-speed="0.05">Consumers are tipping more selectively. After years of tip-screen fatigue, average tip percentages are stabilizing. People still tip—but they're thinking harder about when and why. Service quality matters more than the prompt.</p>
+    </section>
+
+    <!-- Section 8: Footer / The Scoop -->
+    <section id="s8" class="section section--8">
+      <div class="s8-artwork" id="s8Artwork"></div>
+      <div class="s8-content" data-parallax-speed="0.1">
+        <span class="s8__intro">INTRODUCING The Scoop</span>
+        <h2 class="s8__headline">A CULTURAL INTELLIGENCE BRIEFING FOR YOUR BUSINESS.</h2>
+        <p class="s8__body">Pick your industry and location for a trend briefing you can listen to anywhere. Selling with Square? Sign in—yours is already waiting.</p>
+        <div class="s8__buttons">
+          <a href="generate.html" class="s8__btn s8__btn--primary">Get mine</a>
+          <a href="#" class="s8__btn s8__btn--secondary">Sign in</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="scripts/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Scoop — Cultural Intelligence Briefing Simulator</title>
+<style>
+@font-face { font-family: 'CashSans'; src: url('assets/fonts/CashSans-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; }
+@font-face { font-family: 'CashSans'; src: url('assets/fonts/CashSans-RegularItalic.woff2') format('woff2'); font-weight: 400; font-style: italic; }
+@font-face { font-family: 'CashSans'; src: url('assets/fonts/CashSans-Medium.woff2') format('woff2'); font-weight: 500; font-style: normal; }
+@font-face { font-family: 'CashSans'; src: url('assets/fonts/CashSans-MediumItalic.woff2') format('woff2'); font-weight: 500; font-style: italic; }
+@font-face { font-family: 'CashSans'; src: url('assets/fonts/CashSans-Semibold.woff2') format('woff2'); font-weight: 600; font-style: normal; }
+@font-face { font-family: 'CashSans'; src: url('assets/fonts/CashSans-SemiboldItalic.woff2') format('woff2'); font-weight: 600; font-style: italic; }
+@font-face { font-family: 'Staatliches'; src: url('assets/fonts/Staatliches-Regular.ttf') format('truetype'); font-weight: 400; font-style: normal; }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%; height: 100%; overflow: hidden;
+  background: #000;
+  font-family: 'CashSans', -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  width: 100vw; height: 100vh;
+  display: flex;
+  position: relative;
+}
+
+.container, .container * { cursor: none; }
+
+/* ── Custom Cursor ─────────────────────────────────── */
+
+.custom-cursor {
+  position: fixed;
+  width: 17px; height: 17px;
+  background: #9f9f9f;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1000;
+  transform: translate(-50%, -50%);
+  display: none;
+  align-items: center; justify-content: center;
+  overflow: hidden;
+  will-change: left, top;
+  transition:
+    width 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+    height 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+    border-radius 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.custom-cursor.visible { display: flex; }
+
+.custom-cursor.pill {
+  width: 104px; height: 34px;
+  border-radius: 17px;
+  background: #333;
+}
+
+.cursor-label {
+  font-family: 'CashSans', sans-serif;
+  font-size: 12px; font-weight: 500;
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.custom-cursor.pill .cursor-label {
+  opacity: 1;
+  transition: opacity 0.22s ease 0.1s;
+}
+
+/* ── Left Panel ────────────────────────────────────── */
+
+.left-panel {
+  width: 50%; height: 100%;
+  background: #000; color: #fff;
+  display: flex; flex-direction: column;
+  padding: 36px 44px 44px;
+  position: relative;
+  z-index: 2;
+}
+
+.left-header {
+  display: flex; align-items: center; gap: 12px;
+}
+
+.left-header svg { flex-shrink: 0; }
+
+.header-title { font-weight: 500; font-size: 14px; line-height: 1.3; color: #fff; }
+.header-subtitle { font-weight: 400; font-size: 14px; line-height: 1.3; color: #999; }
+
+.left-bottom {
+  margin-top: auto;
+}
+
+.instruction-text {
+  font-size: 13px; font-weight: 400;
+  color: #fff; line-height: 1.55;
+  margin-bottom: 24px;
+  max-width: 300px;
+}
+
+.instruction-text u {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ── Cafe List ─────────────────────────────────────── */
+
+.cafe-list {
+  display: flex; flex-direction: column;
+  gap: 0;
+  width: max(70%, 60vh);
+  max-width: 100%;
+}
+
+.selected-cafe-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 4px 0;
+}
+
+.selected-cafe-name {
+  font-size: 42px; font-weight: 600;
+  color: #fff; line-height: 1.05;
+  background: none; border: none;
+  font-family: 'CashSans', sans-serif;
+  text-align: left; padding: 4px 0;
+}
+
+.selected-cafe-goals {
+  font-size: 11px; font-weight: 400;
+  color: #666; line-height: 1.4;
+  max-width: 180px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cafe-name-btn {
+  background: none; border: none;
+  font-family: 'CashSans', sans-serif;
+  font-size: 42px; font-weight: 400;
+  color: #555;
+  text-align: left; padding: 4px 0;
+  transition: color 0.2s;
+  line-height: 1.05;
+}
+
+.cafe-name-btn:hover { color: #999; }
+
+/* ── Right Panel ───────────────────────────────────── */
+
+.right-panel {
+  width: 50%; height: 100%;
+  background: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.right-scrollable {
+  width: 100%; height: 100%;
+  overflow-y: auto;
+  padding: 40px 40px 64px;
+}
+
+.right-scrollable::-webkit-scrollbar { width: 4px; }
+.right-scrollable::-webkit-scrollbar-track { background: transparent; }
+.right-scrollable::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
+
+/* ── Artwork ───────────────────────────────────────── */
+
+.artwork-wrapper {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  background: #000;
+  flex-shrink: 0;
+  container-type: inline-size;
+}
+
+.artwork-img {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 30%; height: auto;
+  max-height: 30%;
+  object-fit: contain;
+  display: block;
+}
+
+.artwork-brand-overlay {
+  position: absolute; inset: 0;
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 4.27cqi 4.8cqi;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.artwork-brand-overlay.visible { display: flex; }
+
+.brand-header {
+  display: flex; align-items: center; gap: 1.87cqi;
+}
+
+.brand-header svg {
+  width: 7cqi; height: 7cqi;
+}
+
+.brand-header span {
+  font-weight: 600; font-size: 8.53cqi; color: #fff;
+  line-height: 1;
+}
+
+.brand-footer {
+  display: flex; justify-content: flex-end;
+}
+
+.artwork-final {
+  position: absolute; inset: 0;
+  display: none;
+  overflow: hidden;
+  background: #000;
+}
+
+.artwork-final.visible { display: block; }
+
+.artwork-bg {
+  position: absolute; inset: 0;
+  background: #000;
+  background-size: cover; background-position: center;
+}
+
+.artwork-bg::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg,
+    rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.1) 40%,
+    rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.55) 100%
+  );
+}
+
+.artwork-overlay {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  padding: 4.27cqi 4.8cqi;
+  z-index: 2;
+}
+
+.final-header {
+  display: flex; align-items: center; gap: 1.87cqi;
+}
+
+.final-header svg {
+  width: 7cqi; height: 7cqi;
+}
+
+.final-header span {
+  font-weight: 600; font-size: 8.53cqi; color: #fff;
+  line-height: 1;
+}
+
+.play-btn {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.play-icon, .pause-icon { display: none; width: 8.32cqi; height: 8.32cqi; }
+.play-btn[data-playing="false"] .play-icon { display: block; }
+.play-btn[data-playing="true"] .pause-icon { display: block; }
+
+.final-footer {
+  display: flex; align-items: flex-end;
+  justify-content: space-between;
+}
+
+.final-cafe-name {
+  font-weight: 600; font-size: 8.53cqi;
+  color: #fff; line-height: 1.05;
+  max-width: 65%;
+}
+
+.final-ep {
+  font-weight: 600; font-size: 8.53cqi;
+  color: #fff; line-height: 1;
+  flex-shrink: 0;
+}
+
+/* ── Info Area ─────────────────────────────────────── */
+
+.info-area {
+  width: 100%; margin-top: 20px;
+}
+
+.info-area:not(:has(.visible)) { display: none; }
+
+.progress-area { display: none; width: 100%; }
+.progress-area.visible { display: block; }
+
+.progress-text {
+  font-weight: 600; font-size: 15px;
+  color: #000; margin-bottom: 4px;
+}
+
+.progress-subtitle {
+  font-weight: 400; font-size: 15px;
+  color: #999;
+}
+
+.episode-area { display: none; }
+.episode-area.visible {
+  display: block;
+  width: 75%;
+  margin: 56px auto 0;
+  animation: fadeUp 0.6s ease;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.episode-title {
+  font-weight: 600; font-size: 17px;
+  color: #000; margin-bottom: 4px;
+}
+
+.episode-date {
+  font-weight: 400; font-size: 13px;
+  color: #999; margin-bottom: 20px;
+}
+
+.episode-body {
+  font-weight: 400; font-size: 14.5px;
+  color: #222; line-height: 1.65;
+  white-space: pre-wrap;
+}
+
+/* ── Player Bar ────────────────────────────────────── */
+
+.player-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 48px;
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  display: none;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.player-bar.visible { display: flex; }
+
+.player-bar-progress-fill {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.55);
+  width: 0%;
+  transition: width 1s linear;
+  z-index: 1;
+}
+
+.player-bar-content {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+
+.player-bar-info {
+  font-size: 13px; font-weight: 500;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+  margin-right: 16px;
+}
+
+.player-bar-info .player-bar-date {
+  font-weight: 400;
+}
+
+.player-bar-time {
+  font-size: 13px; font-weight: 600;
+  color: #fff; flex-shrink: 0;
+}
+
+/* ── Tooltips ─────────────────────────────────────── */
+
+.data-tooltip-trigger {
+  position: relative;
+  display: inline;
+}
+
+.data-tooltip {
+  position: absolute;
+  left: calc(100% + 14px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: #fff;
+  color: #333;
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-family: 'CashSans', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.35;
+  width: 240px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  z-index: 100;
+  white-space: normal;
+}
+
+.data-tooltip-trigger:hover .data-tooltip { opacity: 1; }
+
+.data-tooltip::after {
+  content: '';
+  position: absolute;
+  left: -7px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 8px solid #fff;
+}
+
+.data-tooltip strong {
+  display: block;
+  font-weight: 600;
+  font-size: 12px;
+  margin-bottom: 5px;
+  line-height: 1.3;
+}
+
+.data-tooltip .dt-item {
+  display: block;
+  margin-top: 5px;
+}
+</style>
+</head>
+<body>
+<div class="container" id="container">
+
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+    <div class="left-header">
+      <svg width="30" height="30" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M38 6.348V31.652C38 35.164 35.153 38 31.652 38H6.348C2.836 38 0 35.153 0 31.652V6.348C0 2.836 2.847 0 6.348 0H31.652C35.164 0 38 2.847 38 6.348ZM31.085 8.911C31.085 7.799 30.191 6.904 29.078 6.904H8.9C7.788 6.904 6.893 7.799 6.893 8.911V29.089C6.893 30.201 7.788 31.096 8.9 31.096H29.078C30.191 31.096 31.085 30.201 31.085 29.089V8.911ZM13.808 14.975C13.808 14.332 14.321 13.819 14.954 13.819H23.025C23.657 13.819 24.17 14.343 24.17 14.975V23.025C24.17 23.668 23.657 24.181 23.025 24.181H14.954C14.321 24.181 13.808 23.657 13.808 23.025V14.975Z" fill="white"/>
+      </svg>
+      <div>
+        <div class="header-title">Cultural Intelligence Briefing</div>
+        <div class="header-subtitle">Simulator Tool</div>
+      </div>
+    </div>
+
+    <div class="left-bottom">
+      <p class="instruction-text">
+        Select a caf&eacute; to simulate a tailored briefing shaped by their goals and our <span class="data-tooltip-trigger"><u>proprietary data insights</u><span class="data-tooltip"><strong>The Briefing is informed by<br>5 data prongs:</strong><span class="dt-item">1. Industry Insights &amp; Trends<br>(anonymized real data)</span><span class="dt-item">2. Cultural Insights &amp; Trends<br>(automated, curated for LA)</span><span class="dt-item">3. Local Community Data<br>(automated, curated for LA)</span><span class="dt-item">4. Customer Feedback<br>(real Google reviews, no API for beta)</span><span class="dt-item">5. Business Goals<br>(Synthetic for Beta)</span></span></span>.
+      </p>
+      <div class="cafe-list" id="cafeList"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+    <div class="right-scrollable" id="rightScrollable">
+      <div class="artwork-wrapper" id="artworkWrapper">
+        <img class="artwork-img" id="artworkImg" src="assets/illustrations/Vector.png" alt="The Scoop Artwork">
+
+        <div class="artwork-brand-overlay visible" id="brandOverlay">
+          <div class="brand-header">
+            <svg width="44" height="44" viewBox="0 0 38 38" fill="none"><path d="M38 6.348V31.652C38 35.164 35.153 38 31.652 38H6.348C2.836 38 0 35.153 0 31.652V6.348C0 2.836 2.847 0 6.348 0H31.652C35.164 0 38 2.847 38 6.348ZM31.085 8.911C31.085 7.799 30.191 6.904 29.078 6.904H8.9C7.788 6.904 6.893 7.799 6.893 8.911V29.089C6.893 30.201 7.788 31.096 8.9 31.096H29.078C30.191 31.096 31.085 30.201 31.085 29.089V8.911ZM13.808 14.975C13.808 14.332 14.321 13.819 14.954 13.819H23.025C23.657 13.819 24.17 14.343 24.17 14.975V23.025C24.17 23.668 23.657 24.181 23.025 24.181H14.954C14.321 24.181 13.808 23.657 13.808 23.025V14.975Z" fill="white"/></svg>
+            <span>The Scoop</span>
+          </div>
+          <div class="brand-footer">
+            <span class="final-ep">Ep 01</span>
+          </div>
+        </div>
+
+        <div class="artwork-final" id="artworkFinal">
+          <div class="artwork-bg" id="artworkBg"></div>
+          <div class="artwork-overlay">
+            <div class="final-header">
+              <svg width="44" height="44" viewBox="0 0 38 38" fill="none"><path d="M38 6.348V31.652C38 35.164 35.153 38 31.652 38H6.348C2.836 38 0 35.153 0 31.652V6.348C0 2.836 2.847 0 6.348 0H31.652C35.164 0 38 2.847 38 6.348ZM31.085 8.911C31.085 7.799 30.191 6.904 29.078 6.904H8.9C7.788 6.904 6.893 7.799 6.893 8.911V29.089C6.893 30.201 7.788 31.096 8.9 31.096H29.078C30.191 31.096 31.085 30.201 31.085 29.089V8.911ZM13.808 14.975C13.808 14.332 14.321 13.819 14.954 13.819H23.025C23.657 13.819 24.17 14.343 24.17 14.975V23.025C24.17 23.668 23.657 24.181 23.025 24.181H14.954C14.321 24.181 13.808 23.657 13.808 23.025V14.975Z" fill="white"/></svg>
+              <span>The Scoop</span>
+            </div>
+            <div class="play-btn" id="playBtn" data-playing="false">
+              <svg class="play-icon" width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <path d="M15 8.27C15 5.84 17.72 4.37 19.76 5.72L41.37 20.45C43.23 21.68 43.23 24.32 41.37 25.55L19.76 40.28C17.72 41.63 15 40.16 15 37.73V8.27Z" fill="white"/>
+              </svg>
+              <svg class="pause-icon" width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <rect x="12" y="8" width="8" height="32" rx="3" fill="white"/>
+                <rect x="28" y="8" width="8" height="32" rx="3" fill="white"/>
+              </svg>
+            </div>
+            <div class="final-footer">
+              <span class="final-cafe-name" id="finalCafeName"></span>
+              <span class="final-ep">Ep 01</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-area">
+        <div class="progress-area" id="progressArea">
+          <div class="progress-text"><span id="progressPercent">0</span>% Complete</div>
+          <div class="progress-subtitle" id="progressSubtitle">This may take a few minutes</div>
+        </div>
+        <div class="episode-area" id="episodeArea">
+          <div class="episode-title" id="episodeTitle"></div>
+          <div class="episode-date" id="episodeDate"></div>
+          <div class="episode-body" id="episodeBody"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="player-bar" id="playerBar">
+      <div class="player-bar-progress-fill" id="playerProgressFill"></div>
+      <div class="player-bar-content">
+        <span class="player-bar-info" id="playerBarInfo"></span>
+        <span class="player-bar-time" id="playerBarTime">3:42</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CUSTOM CURSOR -->
+  <div class="custom-cursor" id="customCursor">
+    <span class="cursor-label">Generate</span>
+  </div>
+
+</div>
+
+<script>
+var API_KEY = '';
+var GENERATION_DURATION = 10000;
+var ARTWORK_CYCLE_MS = 500;
+var EPISODE_DURATION = 222;
+
+var CAFES = [
+  { name: 'Maru Coffee', goals: 'Goals: trying to improve retention, reduce the midweek slump and focus on remote workers', photo: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0f/29/11/42/photo0jpg.jpg?w=500&h=-1&s=1' },
+  { name: 'Jurassic Magic Coffee', goals: 'Goals: increasing weekend foot traffic and building a loyal neighborhood following', photo: 'assets/artwork/jurassic-magic.png' },
+  { name: 'Paradocs Coffee & Tea', goals: 'Goals: expanding the afternoon menu and attracting more study groups' },
+  { name: 'mu.s\u014D', goals: 'Goals: positioning as a creative workspace hub and growing weekday revenue' },
+  { name: 'Re/creation Cafe', goals: 'Goals: launching a loyalty program and boosting average ticket size' },
+  { name: "Tak\u2019s Coffee Shop", goals: 'Goals: building community events program and increasing social media presence', photo: 'https://southlaculture.org/wp-content/uploads/2023/05/Taks-5.jpeg' },
+  { name: 'Bonsai Coffee Bar', goals: 'Goals: growing catering and wholesale channels beyond the storefront' },
+  { name: 'Kumquat Coffee HLP', goals: 'Goals: optimizing morning rush efficiency and reducing wait times' },
+  { name: 'Picaresca Evergreen', goals: 'Goals: developing a seasonal menu strategy and driving repeat visits' },
+  { name: 'Stories Books & Cafe', goals: 'Goals: deepening the books-and-coffee experience and hosting author events' },
+];
+
+var ILLUSTRATION_PATH = 'assets/illustrations/';
+var ARTWORK_FILES = [
+  'Vector-1.png', 'Vector-2.png', 'Vector-3.png',
+  'Vector-4.png', 'Vector-5.png', 'Vector-6.png',
+  'Vector-7.png', 'Vector-8.png', 'Vector-9.png',
+  'Vector-10.png', 'Vector-11.png', 'Vector-12.png',
+  'Vector-13.png', 'Layer_1.png', 'Union.png',
+  'Bottles 1.png',
+  'Group 1422157930.png', 'Group 1422157931.png',
+  'Group 1422157935.png', 'Group 1422158005.png',
+  'Group 1422158814.png', 'Group 1422158821.png',
+  'Group 1828159390.png', 'Group 2147226791.png',
+];
+
+var EPISODE_TITLES = [
+  'The Tar Pits Are Calling',
+  'Sunset Strip Shifts',
+  'East Side Rising',
+  'The Arts District Effect',
+  'Silver Lake Currents',
+];
+
+var BRIEFING_TEMPLATES = [
+  "Good morning, {cafe}. Here\u2019s a number that caught my attention: your late-afternoon transactions are up 18% this quarter, but your average ticket dropped 12%. More people, spending less per visit. That\u2019s not a problem\u2014that\u2019s a signal. Your Mid-Wilshire neighbors are shifting toward smaller, more frequent coffee rituals. And with Frieze LA opening tomorrow and 50,000 art world visitors flooding the city, this week might be the most important of your quarter.\n\nLet\u2019s talk about what\u2019s happening culturally. The hottest trend right now isn\u2019t a drink\u2014it\u2019s a format. Pop-up collaborations between caf\u00e9s and local artists are driving 34% more social engagement than standard promotions. Three caf\u00e9s within two miles of you have already hosted ceramic artists this month. The question isn\u2019t whether to participate\u2014it\u2019s how to make yours distinctive.\n\nHere\u2019s your data snapshot: Your busiest hour has shifted from 8 AM to 9:15 AM over the past six weeks. Your weekend traffic is up, but your weekday afternoons are softening. Consider this: a 2 PM\u20134 PM happy hour for espresso drinks could recapture that midday energy.",
+
+  "Good morning, {cafe}. Something interesting is happening with your weekend crowd. Saturday morning transactions are up 31% over the past quarter, but your Sunday numbers have plateaued. Your neighbors on the east side are seeing the same pattern\u2014a cultural shift toward Saturday as the new \u201Cself-care day\u201D in Los Angeles.\n\nThe cultural calendar this month is stacked. LACMA\u2019s new exhibition opens this Friday, and the Grammy Museum just announced a free weekend. Events like these typically drive a 15\u201322% foot traffic increase within a two-mile radius. Your location puts you right in the sweet spot.\n\nFrom the data: your average customer is visiting 2.3 times per week, up from 1.8 last quarter. Loyalty is building. But here\u2019s the insight\u2014your top 20% of customers account for 58% of your revenue. A simple \u201Cregulars menu\u201D or off-menu item could deepen that relationship without any additional cost.",
+
+  "Good morning, {cafe}. Let\u2019s start with what the neighborhood is telling us. Foot traffic in your area has increased 23% over the last 90 days, driven primarily by new residential developments within a half-mile radius. That\u2019s roughly 400 new potential daily customers who are still forming their routines.\n\nCulturally, Los Angeles is in a matcha moment\u2014but not the way you think. The trend has evolved from basic matcha lattes to ceremonial-grade preparations with house-made syrups. Caf\u00e9s offering elevated matcha experiences are seeing 40% higher per-item revenue than standard menu additions. Your current menu has an opportunity here.\n\nYour Square data reveals something subtle: customers who order food items spend 67% more per visit and return 2.1x more frequently than drink-only customers. Your pastry case might be your most undervalued asset. Consider partnering with a local bakery for exclusive items\u2014three caf\u00e9s in Silver Lake have done this with measurable results.",
+
+  "Good morning, {cafe}. Here\u2019s your cultural pulse for the week. The LA Phil\u2019s free outdoor series starts Thursday at the Hollywood Bowl, drawing an estimated 17,000 visitors over the weekend. Combined with the Echo Park Craft Fair on Saturday, this weekend represents one of the highest foot-traffic periods of the quarter for your area.\n\nA trend worth watching: \u201Cthird-wave nostalgia\u201D is reshaping how Angelenos think about their coffee shops. Customers are gravitating back toward slower, more intentional caf\u00e9 experiences\u2014pour-overs are up 28% across LA Square sellers this quarter. The speed-optimized model is giving way to something more experiential.\n\nFrom your data: your morning rush efficiency has improved\u2014average transaction time is down 18 seconds from last month. But here\u2019s the counterintuitive insight: your highest-revenue hours aren\u2019t your busiest. Your 2\u20134 PM window generates 22% more revenue per customer than the morning rush. That\u2019s your premium window. Lean into it.",
+
+  "Good morning, {cafe}. Let\u2019s talk about a pattern emerging across LA\u2019s independent caf\u00e9 scene. Over the past quarter, caf\u00e9s that have introduced seasonal or limited-time menu items have seen a 35% increase in social media mentions and a 19% bump in new customer acquisition. Your competitors are moving on this.\n\nThe cultural conversation in LA right now is sustainability. Three of the top five trending food hashtags in the greater LA area relate to sustainable sourcing, zero-waste practices, or local partnerships. This isn\u2019t a niche audience anymore\u2014it\u2019s mainstream, and customers are willing to pay a 12\u201315% premium for transparency in sourcing.\n\nYour Square data shows an interesting opportunity: gift card purchases at your location are up 44% quarter over quarter, but redemption rates are only at 61%. That means unredeemed value is sitting on the table. A targeted \u201Cbring a friend\u201D campaign tied to gift card redemption could convert that stored value into new regular customers.",
+];
+
+// ── DOM ────────────────────────────────────────────────────────
+var container = document.getElementById('container');
+var cafeListEl = document.getElementById('cafeList');
+var artworkImg = document.getElementById('artworkImg');
+var brandOverlay = document.getElementById('brandOverlay');
+var artworkFinal = document.getElementById('artworkFinal');
+var artworkBg = document.getElementById('artworkBg');
+var finalCafeName = document.getElementById('finalCafeName');
+var playBtn = document.getElementById('playBtn');
+var progressArea = document.getElementById('progressArea');
+var progressPercent = document.getElementById('progressPercent');
+var progressSubtitle = document.getElementById('progressSubtitle');
+var episodeArea = document.getElementById('episodeArea');
+var episodeTitle = document.getElementById('episodeTitle');
+var episodeDate = document.getElementById('episodeDate');
+var episodeBody = document.getElementById('episodeBody');
+var playerBar = document.getElementById('playerBar');
+var playerProgressFill = document.getElementById('playerProgressFill');
+var playerBarInfo = document.getElementById('playerBarInfo');
+var playerBarTime = document.getElementById('playerBarTime');
+var rightScrollable = document.getElementById('rightScrollable');
+var cursorEl = document.getElementById('customCursor');
+
+// ── State ──────────────────────────────────────────────────────
+var state = 'idle';
+var selectedCafeIndex = -1;
+var cycleTimer = null;
+var progressTimer = null;
+var artworkIndex = 0;
+var progress = 0;
+var cafePhotoUrl = null;
+var playbackTimer = null;
+var playbackElapsed = 0;
+var currentBriefing = null;
+var preloadedImages = [];
+var isOverCafe = false;
+
+// ── Preload ────────────────────────────────────────────────────
+function preloadArtwork() {
+  ARTWORK_FILES.forEach(function(file) {
+    var img = new Image();
+    img.src = ILLUSTRATION_PATH + file;
+    preloadedImages.push(img);
+  });
+}
+
+// ── Google Places ──────────────────────────────────────────────
+var placesLoaded = false;
+
+function loadGooglePlaces() {
+  if (!API_KEY || placesLoaded) return;
+  placesLoaded = true;
+  var s = document.createElement('script');
+  s.src = 'https://maps.googleapis.com/maps/api/js?key=' + API_KEY + '&libraries=places';
+  s.async = true;
+  document.head.appendChild(s);
+}
+
+async function fetchCafePhoto(cafeName) {
+  if (!API_KEY || !window.google || !google.maps) return null;
+  try {
+    var lib = await google.maps.importLibrary('places');
+    var result = await lib.Place.searchByText({
+      textQuery: cafeName + ' cafe Los Angeles',
+      fields: ['photos'],
+      maxResultCount: 1,
+    });
+    if (result.places && result.places.length && result.places[0].photos && result.places[0].photos.length) {
+      return result.places[0].photos[0].getURI({ maxWidth: 800 });
+    }
+  } catch (e) {
+    console.warn('Places API error:', e);
+  }
+  return null;
+}
+
+// ── Helpers ────────────────────────────────────────────────────
+function pickRandom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function generateBriefing(cafeName) {
+  var title = pickRandom(EPISODE_TITLES);
+  var template = pickRandom(BRIEFING_TEMPLATES);
+  var body = template.replace(/\{cafe\}/g, cafeName);
+  var d = new Date();
+  d.setDate(d.getDate() + 2);
+  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var dateStr = months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+  return { title: title, body: body, date: dateStr };
+}
+
+function formatTime(seconds) {
+  var m = Math.floor(seconds / 60);
+  var s = seconds % 60;
+  return m + ':' + (s < 10 ? '0' : '') + s;
+}
+
+// ── Cafe List ──────────────────────────────────────────────────
+function renderCafeList() {
+  var html = '';
+
+  if (selectedCafeIndex >= 0) {
+    var cafe = CAFES[selectedCafeIndex];
+    html += '<span class="selected-cafe-name" data-index="' + selectedCafeIndex + '">' + cafe.name + '</span>';
+  }
+
+  for (var i = 0; i < CAFES.length; i++) {
+    if (i === selectedCafeIndex) continue;
+    html += '<button class="cafe-name-btn" data-index="' + i + '">' + CAFES[i].name + '</button>';
+  }
+
+  cafeListEl.innerHTML = html;
+
+  cafeListEl.querySelectorAll('.cafe-name-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      selectCafe(parseInt(this.dataset.index));
+    });
+  });
+
+  var selectedNameEl = cafeListEl.querySelector('.selected-cafe-name');
+  if (selectedNameEl) {
+    selectedNameEl.addEventListener('click', function() {
+      startGeneration();
+    });
+  }
+}
+
+// ── Core Actions ───────────────────────────────────────────────
+function selectCafe(index) {
+  clearTimers();
+  stopPlayback();
+  selectedCafeIndex = index;
+  renderCafeList();
+  startGeneration();
+}
+
+function clearTimers() {
+  if (cycleTimer) { clearInterval(cycleTimer); cycleTimer = null; }
+  if (progressTimer) { clearInterval(progressTimer); progressTimer = null; }
+}
+
+function startGeneration() {
+  state = 'generating';
+  clearTimers();
+  stopPlayback();
+
+  artworkFinal.classList.remove('visible');
+  artworkImg.style.display = 'block';
+  brandOverlay.classList.add('visible');
+  episodeArea.classList.remove('visible');
+  progressArea.classList.add('visible');
+  playerBar.classList.remove('visible');
+  playBtn.dataset.playing = 'false';
+
+  progress = 0;
+  artworkIndex = 0;
+  progressPercent.textContent = '0';
+  cafePhotoUrl = null;
+  rightScrollable.scrollTop = 0;
+
+  var cafeName = CAFES[selectedCafeIndex].name;
+  var goalsText = CAFES[selectedCafeIndex].goals.replace(/^Goals:\s*/i, '');
+  progressSubtitle.textContent = 'Goals for ' + cafeName + ': ' + goalsText;
+
+  cycleTimer = setInterval(function() {
+    artworkIndex = (artworkIndex + 1) % ARTWORK_FILES.length;
+    artworkImg.src = ILLUSTRATION_PATH + ARTWORK_FILES[artworkIndex];
+  }, ARTWORK_CYCLE_MS);
+
+  var stepMs = GENERATION_DURATION / 100;
+  progressTimer = setInterval(function() {
+    progress++;
+    progressPercent.textContent = progress;
+    if (progress >= 100) {
+      clearTimers();
+      completeGeneration(cafeName);
+    }
+  }, stepMs);
+
+  var cafe = CAFES[selectedCafeIndex];
+  if (cafe.photo) {
+    cafePhotoUrl = cafe.photo;
+  } else {
+    fetchCafePhoto(cafeName).then(function(url) { cafePhotoUrl = url; });
+  }
+}
+
+function completeGeneration(cafeName) {
+  state = 'complete';
+  progressArea.classList.remove('visible');
+
+  if (cafePhotoUrl) {
+    artworkBg.style.backgroundImage = 'url(' + cafePhotoUrl + ')';
+    artworkBg.style.backgroundColor = '';
+  } else {
+    artworkBg.style.backgroundImage = 'none';
+    artworkBg.style.backgroundColor = '#000';
+  }
+
+  finalCafeName.textContent = cafeName;
+  artworkImg.style.display = 'none';
+  brandOverlay.classList.remove('visible');
+  artworkFinal.classList.add('visible');
+  playBtn.dataset.playing = 'false';
+
+  currentBriefing = generateBriefing(cafeName);
+  episodeTitle.textContent = 'Episode 01 \u2014 \u201C' + currentBriefing.title + '\u201D';
+  episodeDate.textContent = currentBriefing.date;
+  episodeBody.textContent = currentBriefing.body;
+  episodeArea.classList.add('visible');
+
+  playerBarInfo.innerHTML = 'Episode 01 \u2014 \u201C' + currentBriefing.title + '\u201D <span class="player-bar-date">' + currentBriefing.date + '</span>';
+}
+
+// ── Playback ───────────────────────────────────────────────────
+function togglePlayback() {
+  if (state === 'complete') {
+    startPlayback();
+  } else if (state === 'playing') {
+    pausePlayback();
+  }
+}
+
+function startPlayback() {
+  state = 'playing';
+  playBtn.dataset.playing = 'true';
+  playerBar.classList.add('visible');
+
+  playerBarTime.textContent = formatTime(EPISODE_DURATION - playbackElapsed);
+  playerProgressFill.style.width = (playbackElapsed / EPISODE_DURATION * 100) + '%';
+
+  playbackTimer = setInterval(function() {
+    playbackElapsed++;
+    var remaining = EPISODE_DURATION - playbackElapsed;
+    playerBarTime.textContent = formatTime(remaining);
+    playerProgressFill.style.width = (playbackElapsed / EPISODE_DURATION * 100) + '%';
+
+    if (playbackElapsed >= EPISODE_DURATION) {
+      stopPlayback();
+      state = 'complete';
+      playBtn.dataset.playing = 'false';
+      playerBar.classList.remove('visible');
+    }
+  }, 1000);
+}
+
+function pausePlayback() {
+  state = 'complete';
+  playBtn.dataset.playing = 'false';
+  playerBar.classList.remove('visible');
+  if (playbackTimer) {
+    clearInterval(playbackTimer);
+    playbackTimer = null;
+  }
+}
+
+function stopPlayback() {
+  if (playbackTimer) {
+    clearInterval(playbackTimer);
+    playbackTimer = null;
+  }
+  playbackElapsed = 0;
+  playerProgressFill.style.width = '0%';
+  playerBar.classList.remove('visible');
+  playBtn.dataset.playing = 'false';
+}
+
+// ── Custom Cursor ──────────────────────────────────────────────
+container.addEventListener('mousemove', function(e) {
+  cursorEl.style.left = e.clientX + 'px';
+  cursorEl.style.top = e.clientY + 'px';
+});
+
+container.addEventListener('mouseenter', function() {
+  cursorEl.classList.add('visible');
+});
+
+container.addEventListener('mouseleave', function() {
+  cursorEl.classList.remove('visible');
+  cursorEl.classList.remove('pill');
+  isOverCafe = false;
+});
+
+document.addEventListener('mouseover', function(e) {
+  var target = e.target.closest('.cafe-name-btn, .selected-cafe-name');
+  if (target) {
+    if (!isOverCafe) {
+      isOverCafe = true;
+      cursorEl.classList.add('pill');
+    }
+  } else if (isOverCafe) {
+    isOverCafe = false;
+    cursorEl.classList.remove('pill');
+  }
+});
+
+// ── Events ─────────────────────────────────────────────────────
+playBtn.addEventListener('click', togglePlayback);
+
+// ── Init ───────────────────────────────────────────────────────
+preloadArtwork();
+loadGooglePlaces();
+renderCafeList();
+</script>
+</body>
+</html>
